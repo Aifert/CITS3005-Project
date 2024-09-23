@@ -1,4 +1,5 @@
-from owlready2 import *
+from owlready2 import get_ontology, Thing, ObjectProperty, DataProperty
+
 
 def load_ontology(file_path):
     """
@@ -7,18 +8,22 @@ def load_ontology(file_path):
     onto = get_ontology(file_path).load()
     return onto
 
+
 def create_ontology():
     """
     Create the iFixit ontology structure.
     """
-    onto = get_ontology("http://example.org/ifixit-ontology.owl")
+    onto = get_ontology("http://www.ifixit.com/ontology#")
 
     with onto:
         # Define classes
+        class Procedure(Thing):
+            pass
+
         class Item(Thing):
             pass
 
-        class Procedure(Thing):
+        class Part(Thing):
             pass
 
         class Tool(Thing):
@@ -27,23 +32,45 @@ def create_ontology():
         class Step(Thing):
             pass
 
-        # Define object properties
-        class has_part(ObjectProperty):
-            domain = [Item]
-            range = [Item]
+        class Image(Thing):
+            pass
 
-        class has_procedure(ObjectProperty):
+        # Define object properties
+        class hasProcedure(ObjectProperty):
             domain = [Item]
             range = [Procedure]
 
-        class has_step(ObjectProperty):
+        class hasStep(ObjectProperty):
             domain = [Procedure]
             range = [Step]
 
-        class uses_tool(ObjectProperty):
+        class usesPart(ObjectProperty):
+            domain = [Step]
+            range = [Part]
+
+        class usesTool(ObjectProperty):
             domain = [Step]
             range = [Tool]
 
-    return onto
+        class hasImage(ObjectProperty):
+            domain = [Step]
+            range = [Image]
 
-# Add more functions as needed
+        # Define data properties
+        class title(DataProperty):
+            domain = [Procedure]
+            range = [str]
+
+        class stepOrder(DataProperty):
+            domain = [Step]
+            range = [int]
+
+        class stepText(DataProperty):
+            domain = [Step]
+            range = [str]
+
+        class imageUrl(DataProperty):
+            domain = [Image]
+            range = [str]
+
+    return onto
