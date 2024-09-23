@@ -1,0 +1,103 @@
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+         xmlns:owl="http://www.w3.org/2002/07/owl#"
+         xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+         xmlns:sh="http://www.w3.org/ns/shacl#"
+         xmlns:ifixit="http://www.ifixit.com/ontology#">
+
+    <!-- Classes -->
+    <owl:Class rdf:about="ifixit:Procedure"/>
+    <owl:Class rdf:about="ifixit:Item"/>
+    <owl:Class rdf:about="ifixit:Part"/>
+    <owl:Class rdf:about="ifixit:Tool"/>
+    <owl:Class rdf:about="ifixit:Step"/>
+    <owl:Class rdf:about="ifixit:Image"/>
+
+    <!-- Object Properties -->
+    <owl:ObjectProperty rdf:about="ifixit:hasProcedure">
+        <rdfs:domain rdf:resource="ifixit:Item"/>
+        <rdfs:range rdf:resource="ifixit:Procedure"/>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="ifixit:hasStep">
+        <rdfs:domain rdf:resource="ifixit:Procedure"/>
+        <rdfs:range rdf:resource="ifixit:Step"/>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="ifixit:usesPart">
+        <rdfs:domain rdf:resource="ifixit:Step"/>
+        <rdfs:range rdf:resource="ifixit:Part"/>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="ifixit:usesTool">
+        <rdfs:domain rdf:resource="ifixit:Step"/>
+        <rdfs:range rdf:resource="ifixit:Tool"/>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="ifixit:hasImage">
+        <rdfs:domain rdf:resource="ifixit:Step"/>
+        <rdfs:range rdf:resource="ifixit:Image"/>
+    </owl:ObjectProperty>
+
+    <!-- Data Properties -->
+    <owl:DatatypeProperty rdf:about="ifixit:title">
+        <rdfs:domain rdf:resource="ifixit:Procedure"/>
+        <rdfs:range rdf:resource="xsd:string"/>
+    </owl:DatatypeProperty>
+
+    <owl:DatatypeProperty rdf:about="ifixit:stepOrder">
+        <rdfs:domain rdf:resource="ifixit:Step"/>
+        <rdfs:range rdf:resource="xsd:integer"/>
+    </owl:DatatypeProperty>
+
+    <owl:DatatypeProperty rdf:about="ifixit:stepText">
+        <rdfs:domain rdf:resource="ifixit:Step"/>
+        <rdfs:range rdf:resource="xsd:string"/>
+    </owl:DatatypeProperty>
+
+    <owl:DatatypeProperty rdf:about="ifixit:imageUrl">
+        <rdfs:domain rdf:resource="ifixit:Image"/>
+        <rdfs:range rdf:resource="xsd:anyURI"/>
+    </owl:DatatypeProperty>
+
+    <!-- SHACL Shapes -->
+    <sh:NodeShape rdf:about="ifixit:ProcedureShape">
+        <sh:targetClass rdf:resource="ifixit:Procedure"/>
+        <sh:property>
+            <sh:PropertyShape>
+                <sh:path rdf:resource="ifixit:title"/>
+                <sh:datatype rdf:resource="xsd:string"/>
+                <sh:minCount>1</sh:minCount>
+                <sh:maxCount>1</sh:maxCount>
+            </sh:PropertyShape>
+        </sh:property>
+        <sh:property>
+            <sh:PropertyShape>
+                <sh:path rdf:resource="ifixit:hasStep"/>
+                <sh:class rdf:resource="ifixit:Step"/>
+                <sh:minCount>1</sh:minCount>
+            </sh:PropertyShape>
+        </sh:property>
+    </sh:NodeShape>
+
+    <sh:NodeShape rdf:about="ifixit:StepShape">
+        <sh:targetClass rdf:resource="ifixit:Step"/>
+        <sh:property>
+            <sh:PropertyShape>
+                <sh:path rdf:resource="ifixit:stepOrder"/>
+                <sh:datatype rdf:resource="xsd:integer"/>
+                <sh:minCount>1</sh:minCount>
+                <sh:maxCount>1</sh:maxCount>
+            </sh:PropertyShape>
+        </sh:property>
+        <sh:property>
+            <sh:PropertyShape>
+                <sh:path rdf:resource="ifixit:stepText"/>
+                <sh:datatype rdf:resource="xsd:string"/>
+                <sh:minCount>1</sh:minCount>
+                <sh:maxCount>1</sh:maxCount>
+            </sh:PropertyShape>
+        </sh:property>
+    </sh:NodeShape>
+
+</rdf:RDF>
