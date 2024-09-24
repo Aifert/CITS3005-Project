@@ -15,7 +15,7 @@ class QueryEngine:
         SELECT ?procedure (COUNT(?step) as ?stepCount)
         WHERE {{
             ?procedure a ifixit:Procedure ;
-                       ifixit:has_step ?step .
+                       ifixit:hasStep ?step .
         }}
         GROUP BY ?procedure
         HAVING (?stepCount > {n})
