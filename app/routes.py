@@ -16,4 +16,4 @@ def search():
         uri_ref = row[0]
         results.append(str(uri_ref))
 
-    return render_template('results.html', results=results)
+    return render_template('results.html', results=results, query=query)
