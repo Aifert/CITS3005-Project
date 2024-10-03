@@ -1,39 +1,81 @@
 from rdflib import Graph
 
+
 class QueryEngine:
     def __init__(self, graph):
         self.graph = graph
         self.prefix = "PREFIX ifixit: <http://www.ifixit.com/ontology#>"
 
-    def execute_query(self, query):
-        return self.graph.query(query)
-
-    def find_procedures_with_more_than_n_steps(self, n):
+    def execute_query(self, query_to_execute):
         query = f"""
         {self.prefix}
-        PREFIX ifixit: <http://www.ifixit.com/ontology#>
-        SELECT ?procedure (COUNT(?step) as ?stepCount)
-        WHERE {{
-            ?procedure a ifixit:Procedure ;
-                       ifixit:hasStep ?step .
-        }}
-        GROUP BY ?procedure
-        HAVING (?stepCount > {n})
+        {query_to_execute}
         """
         return self.graph.query(query)
 
-    def find_items_with_more_than_n_procedures(self, n):
+    def find_procedures_with_more_than_6_steps(self):
         query = f"""
         {self.prefix}
-        PREFIX ifixit: <http://www.ifixit.com/ontology#>
+        SELECT ?item ?procedure (COUNT(?step) as ?stepCount)
+            WHERE {{
+                ?item rdf:type ifixit:Item .
+                ?item ifixit:hasProcedure ?procedure .
+                ?procedure ifixit:hasStep ?step .
+            }}
+            GROUP BY ?item ?procedure
+            HAVING (COUNT(?step) > 6)
+            ORDER BY DESC(?stepCount)
+            """
+        return self.graph.query(query)
+
+
+    def find_items_with_more_than_10_procedures(self):
+        query = f"""
+        {self.prefix}
         SELECT ?item (COUNT(?procedure) as ?procedureCount)
+            WHERE {{
+                ?item rdf:type ifixit:Item .
+                ?item ifixit:hasProcedure ?procedure .
+            }}
+            GROUP BY ?item
+            HAVING (COUNT(?procedure) > 10)
+            ORDER BY DESC(?procedureCount)
+        """
+        return self.execute_query(query)
+
+    def find_procedures_with_unused_tools(self):
+        query = f"""
+        {self.prefix}
+        SELECT DISTINCT ?procedure
         WHERE {{
-            ?item a ifixit:Item ;
-                  ifixit:has_procedure ?procedure .
+            ?procedure rdf:type ifixit:Procedure .
+            FILTER NOT EXISTS {{
+                ?procedure ifixit:usesTool ?tool .
+            }}
         }}
-        GROUP BY ?item
-        HAVING (?procedureCount > {n})
+        """
+        return self.execute_query(query)
+
+    def flag_potential_hazards(self):
+        query = f"""
+        {self.prefix}
+        SELECT ?procedure ?step ?stepText
+        WHERE {{
+            ?procedure rdf:type ifixit:Procedure .
+            ?procedure ifixit:hasStep ?step .
+            ?step ifixit:stepText ?stepText .
+            FILTER (REGEX(?stepText, "careful|dangerous|carefully", "i"))
+        }}
+        """
+        return self.execute_query(query)
+
+    def find_all_triples(self):
+        query = f"""
+        {self.prefix}
+        SELECT ?s ?p ?o
+        WHERE {{
+            ?s ?p ?o .
+        }}
         """
         return self.graph.query(query)
-
     # Add more query methods as needed

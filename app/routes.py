@@ -1,14 +1,21 @@
 from flask import render_template, request
 from app import app, query_engine
+from .tools import queries
+
 
 @app.route('/')
 def index():
     return render_template('search_form.html')
 
+
 @app.route('/search', methods=['POST'])
 def search():
     query = request.form['query']
-    raw_results = query_engine.execute_query(query)
+    print(query)
+    try:
+        raw_results = queries[query]()
+    except KeyError:
+        raw_results = query_engine.execute_query(query)
 
     results = []
 
