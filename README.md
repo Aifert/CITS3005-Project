@@ -1,4 +1,3 @@
-# Murder Mystery Game / Forum
 1. **Set Up the Virtual Environment**:
     ```bash
     python3 -m venv venv
