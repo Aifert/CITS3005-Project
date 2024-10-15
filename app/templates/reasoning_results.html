@@ -12,17 +12,19 @@
 </head>
 <body>
     <h1>Reasoning Results</h1>
-    <h2>Caution Procedures</h2>
+    <h2>{{ result_type }}</h2>
     <ul>
-    {% for proc in results.CautionProcedures %}
-        <li>{{ proc | replace("careful", "<span class='highlight-red'>careful</span>") | replace("carefully", "<span class='highlight-red'>carefully</span>") | safe }}</li>
+    {% for item in results[result_type] %}
+        <li>{{ item | replace(text_to_highlight, "<span class='highlight-red'>" + text_to_highlight + "</span>") | safe }}</li>
     {% endfor %}
     </ul>
-    <h2>Steps with Caution</h2>
+    {% if subtype %}
+    <h2>{{ subtype }}</h2>
     <ul>
-    {% for step in results.StepsWithCaution %}
-        <li><strong>{{ step[0] }}:</strong> {{ step[1] | replace("careful", "<span class='highlight-red'>careful</span>") | replace("carefully", "<span class='highlight-red'>carefully</span>") | safe }}</li>
+    {% for item in results[subtype] %}
+        <li><strong>{{ item[0] }}:</strong> {{ item[1] | replace(text_to_highlight, "<span class='highlight-red'>" + text_to_highlight + "</span>") | safe }}</li>
     {% endfor %}
     </ul>
+    {% endif %}
 </body>
 </html>

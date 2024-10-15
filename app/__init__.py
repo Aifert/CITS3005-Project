@@ -16,6 +16,8 @@ kg.load_data('data/Mac.json')
 
 reasoned_ontology, reasoning_results = demonstrate_reasoning(ontology, kg)
 
+print(reasoning_results)
+
 kg.graph.serialize(destination='knowledge_graph.rdf', format='xml')
 kg.graph.serialize(destination='knowledge_graph.ttl', format='turtle')
 

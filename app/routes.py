@@ -25,7 +25,38 @@ def search():
 
     return render_template('results.html', results=results, query=query)
 
-@app.route('/reasoning_results')
-def show_reasoning_results():
+
+@app.route('/careful_reasoning_results')
+def show_careful_reasoning_results():
     results = app.config['REASONING_RESULTS']
-    return render_template('reasoning_results.html', results=results)
+    return render_template('reasoning_results.html', results=results, result_type="CautionProcedures", subtype="StepsWithCaution", text_to_highlight="careful")
+
+
+@app.route('/long_reasoning_results')
+def show_long_reasoning_results():
+    results = app.config['REASONING_RESULTS']
+    return render_template('reasoning_results.html', results=results, result_type="LongProcedures", subtype="ProceduresWithStepCount", text_to_highlight="")
+
+
+@app.route('/complex_reasoning_results')
+def show_complex_reasoning_results():
+    results = app.config['REASONING_RESULTS']
+    return render_template('reasoning_results.html', results=results, result_type="ComplexProcedures", subtype="", text_to_highlight="")
+
+
+@app.route('/all_reasoning_results')
+def show_all_reasoning_results():
+    results = app.config['REASONING_RESULTS']
+    return render_template('reasoning_results.html', results=results, result_type="AllProcedures", subtype=None, text_to_highlight="")
+
+
+@app.route('/step_count_reasoning_results')
+def show_step_reasoning_results():
+    results = app.config['REASONING_RESULTS']
+    return render_template('reasoning_results.html', results=results, result_type="ProceduresWithStepCount", subtype=None, text_to_highlight="")
+
+
+@app.route('/tool_count_reasoning_results')
+def show_tool_reasoning_results():
+    results = app.config['REASONING_RESULTS']
+    return render_template('reasoning_results.html', results=results, result_type="ProceduresWithToolCount", subtype=None, text_to_highlight="")
