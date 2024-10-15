@@ -16,17 +16,6 @@ kg.load_data('data/Mac.json')
 
 reasoned_ontology, reasoning_results = demonstrate_reasoning(ontology, kg)
 
-# Print reasoning results
-print("\n--- Reasoning Results ---")
-print(f"Total Procedures: {len(reasoning_results.get('AllProcedures', []))}")
-print(f"Caution Procedures: {len(reasoning_results.get('CautionProcedures', []))}")
-print("Caution Procedures List:")
-for proc in reasoning_results.get('CautionProcedures', []):
-    print(f"  - {proc}")
-print("\nSteps with Caution:")
-for step_name, step_text in reasoning_results.get('StepsWithCaution', []):
-    print(f"  - {step_name}: {step_text}")
-
 kg.graph.serialize(destination='knowledge_graph.rdf', format='xml')
 kg.graph.serialize(destination='knowledge_graph.ttl', format='turtle')
 
