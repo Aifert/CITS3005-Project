@@ -3,6 +3,7 @@ from urllib.parse import quote
 from rdflib import Graph, Literal, RDF, URIRef, Namespace
 from rdflib.namespace import RDFS, XSD
 
+
 class KnowledgeGraph:
     def __init__(self):
         self.graph = Graph()
@@ -53,6 +54,20 @@ class KnowledgeGraph:
                 if tool != "NA" and tool not in toolbox_tools:
                     toolbox_tools.append(tool)
                     self._add_tools(procedure_uri, [tool])
+
+        # Add difficulty level and estimated time for the procedure
+        self.graph.add((procedure_uri, self.ifixit.difficultyLevel, Literal(item_data.get('Difficulty', 'Medium'))))
+        self.graph.add((procedure_uri, self.ifixit.estimatedTime, Literal(item_data.get('Time_Required', 'PT1H'), datatype=XSD.duration)))
+
+        # Add sub-procedure relationships
+        for sub_procedure_id in item_data.get('SubProcedures', []):
+            sub_procedure = URIRef(self.ifixit[f"Procedure_{sub_procedure_id}"])
+            self.graph.add((procedure_uri, self.ifixit.hasSubProcedure, sub_procedure))
+
+        # Add part requirements
+        for part in item_data.get('RequiredParts', []):
+            part_uri = URIRef(self.ifixit[f"Part_{part['Name'].replace(' ', '_')}"])
+            self.graph.add((procedure_uri, self.ifixit.requiresPart, part_uri))
 
     def _add_steps(self, procedure_uri, steps):
         """
