@@ -1,17 +1,56 @@
-<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-         xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+<rdf:RDF xmlns="http://www.ifixit.com/ontology#"
          xmlns:owl="http://www.w3.org/2002/07/owl#"
+         xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:xml="http://www.w3.org/XML/1998/namespace"
          xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+         xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
          xmlns:sh="http://www.w3.org/ns/shacl#"
-         xmlns:ifixit="http://www.ifixit.com/ontology#">
+         xmlns:ifixit="http://www.ifixit.com/ontology#"
+         xml:base="http://www.ifixit.com/ontology">
+
+    <!-- Ontology Header -->
+    <owl:Ontology rdf:about="http://www.ifixit.com/ontology">
+        <rdfs:comment>
+            This ontology models the domain of device repair procedures, specifically for iFixit.
+            It captures the relationships between items (devices), procedures, steps, tools, and parts.
+            The ontology is designed to support querying for complex repair procedures,
+            tool usage, and potential safety concerns in repair steps.
+
+            Key design decisions:
+            1. Hierarchical structure for devices (e.g., Mac -> MacLaptop -> PowerBook)
+            2. Separation of Procedure and Step classes to allow for detailed modeling of repair processes
+            3. Use of SHACL shapes to enforce data quality and consistency
+            4. Complex axioms to define concepts like ComplexProcedure and SafeProcedure
+
+            This ontology aims to balance expressiveness with query efficiency,
+            allowing for both detailed representation of repair procedures and
+            effective retrieval of information for the iFixit application.
+        </rdfs:comment>
+    </owl:Ontology>
 
     <!-- Classes -->
-    <owl:Class rdf:about="ifixit:Procedure"/>
     <owl:Class rdf:about="ifixit:Item"/>
-    <owl:Class rdf:about="ifixit:Part"/>
+    <owl:Class rdf:about="ifixit:Part">
+        <rdfs:subClassOf rdf:resource="ifixit:Item"/>
+    </owl:Class>
     <owl:Class rdf:about="ifixit:Tool"/>
+    <owl:Class rdf:about="ifixit:Procedure"/>
+    <owl:Class rdf:about="ifixit:SubProcedure">
+        <rdfs:subClassOf rdf:resource="ifixit:Procedure"/>
+    </owl:Class>
     <owl:Class rdf:about="ifixit:Step"/>
     <owl:Class rdf:about="ifixit:Image"/>
+
+    <!-- Transitive Subclass Relations -->
+    <owl:Class rdf:about="ifixit:Mac">
+        <rdfs:subClassOf rdf:resource="ifixit:Item"/>
+    </owl:Class>
+    <owl:Class rdf:about="ifixit:MacLaptop">
+        <rdfs:subClassOf rdf:resource="ifixit:Mac"/>
+    </owl:Class>
+    <owl:Class rdf:about="ifixit:PowerBook">
+        <rdfs:subClassOf rdf:resource="ifixit:MacLaptop"/>
+    </owl:Class>
 
     <!-- Object Properties -->
     <owl:ObjectProperty rdf:about="ifixit:hasProcedure">
@@ -39,53 +78,147 @@
         <rdfs:range rdf:resource="ifixit:Image"/>
     </owl:ObjectProperty>
 
+    <!-- Part-of Relation -->
+    <owl:ObjectProperty rdf:about="ifixit:isPartOf">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#TransitiveProperty"/>
+        <rdfs:domain rdf:resource="ifixit:Item"/>
+        <rdfs:range rdf:resource="ifixit:Item"/>
+    </owl:ObjectProperty>
+
+    <!-- Toolbox Relation -->
+    <owl:ObjectProperty rdf:about="ifixit:hasToolbox">
+        <rdfs:domain rdf:resource="ifixit:Procedure"/>
+        <rdfs:range rdf:resource="ifixit:Tool"/>
+    </owl:ObjectProperty>
+
+    <!-- Sub-Procedure Relation -->
+    <owl:ObjectProperty rdf:about="ifixit:hasSubProcedure">
+        <rdfs:domain rdf:resource="ifixit:Procedure"/>
+        <rdfs:range rdf:resource="ifixit:Procedure"/>
+        <rdfs:subPropertyOf rdf:resource="ifixit:isPrerequisiteFor"/>
+    </owl:ObjectProperty>
+
+    <!-- Procedure-Item Relation -->
+    <owl:ObjectProperty rdf:about="ifixit:forItem">
+        <rdfs:domain rdf:resource="ifixit:Procedure"/>
+        <rdfs:range rdf:resource="ifixit:Item"/>
+    </owl:ObjectProperty>
+
     <!-- Data Properties -->
     <owl:DatatypeProperty rdf:about="ifixit:title">
         <rdfs:domain rdf:resource="ifixit:Procedure"/>
-        <rdfs:range rdf:resource="xsd:string"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
     </owl:DatatypeProperty>
 
     <owl:DatatypeProperty rdf:about="ifixit:stepOrder">
         <rdfs:domain rdf:resource="ifixit:Step"/>
-        <rdfs:range rdf:resource="xsd:integer"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#integer"/>
     </owl:DatatypeProperty>
 
     <owl:DatatypeProperty rdf:about="ifixit:stepText">
         <rdfs:domain rdf:resource="ifixit:Step"/>
-        <rdfs:range rdf:resource="xsd:string"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
     </owl:DatatypeProperty>
 
     <owl:DatatypeProperty rdf:about="ifixit:imageUrl">
         <rdfs:domain rdf:resource="ifixit:Image"/>
-        <rdfs:range rdf:resource="xsd:anyURI"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#anyURI"/>
     </owl:DatatypeProperty>
 
     <!-- SHACL Shapes -->
+
+    <!-- Procedure Shape -->
     <sh:NodeShape rdf:about="ifixit:ProcedureShape">
         <sh:targetClass rdf:resource="ifixit:Procedure"/>
+        <!-- Title Constraint -->
         <sh:property>
             <sh:PropertyShape>
                 <sh:path rdf:resource="ifixit:title"/>
-                <sh:datatype rdf:resource="xsd:string"/>
-                <sh:minCount>1</sh:minCount>
-                <sh:maxCount>1</sh:maxCount>
+                <sh:datatype rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+                <sh:minCount rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</sh:minCount>
+                <sh:maxCount rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</sh:maxCount>
             </sh:PropertyShape>
         </sh:property>
+        <!-- Step Constraint -->
         <sh:property>
             <sh:PropertyShape>
                 <sh:path rdf:resource="ifixit:hasStep"/>
                 <sh:class rdf:resource="ifixit:Step"/>
+                <sh:minCount rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</sh:minCount>
+            </sh:PropertyShape>
+        </sh:property>
+        <!-- Toolbox Constraint -->
+        <sh:property>
+            <sh:PropertyShape>
+                <sh:path rdf:resource="ifixit:hasToolbox"/>
+                <sh:class rdf:resource="ifixit:Tool"/>
+                <!-- Ensure that tools used in steps are included in the toolbox -->
+                <sh:equals>
+                    <sh:path>
+                        <rdf:List>
+                            <rdf:first rdf:resource="ifixit:hasStep"/>
+                            <rdf:rest>
+                                <rdf:List>
+                                    <rdf:first rdf:resource="ifixit:usesTool"/>
+                                    <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+                                </rdf:List>
+                            </rdf:rest>
+                        </rdf:List>
+                    </sh:path>
+                </sh:equals>
+            </sh:PropertyShape>
+        </sh:property>
+        <sh:property>
+            <sh:PropertyShape>
+                <sh:path rdf:resource="ifixit:difficultyLevel"/>
                 <sh:minCount>1</sh:minCount>
+                <sh:maxCount>1</sh:maxCount>
+                <sh:in rdf:parseType="Collection">
+                    <rdf:Description rdf:value="Easy"/>
+                    <rdf:Description rdf:value="Medium"/>
+                    <rdf:Description rdf:value="Difficult"/>
+                </sh:in>
+            </sh:PropertyShape>
+        </sh:property>
+        <sh:property>
+            <sh:PropertyShape>
+                <sh:path rdf:resource="ifixit:estimatedTime"/>
+                <sh:minCount>1</sh:minCount>
+                <sh:maxCount>1</sh:maxCount>
+                <sh:datatype rdf:resource="http://www.w3.org/2001/XMLSchema#duration"/>
             </sh:PropertyShape>
         </sh:property>
     </sh:NodeShape>
 
+    <!-- Sub-Procedure Shape -->
+    <sh:NodeShape rdf:about="ifixit:SubProcedureShape">
+        <sh:targetClass rdf:resource="ifixit:Procedure"/>
+        <sh:property>
+            <sh:PropertyShape>
+                <sh:path rdf:resource="ifixit:hasSubProcedure"/>
+                <sh:class rdf:resource="ifixit:Procedure"/>
+                <!-- Constraint: Sub-procedure must be for the same item or a part of that item -->
+                <sh:or>
+                    <sh:PropertyShape>
+                        <sh:path rdf:resource="ifixit:forItem"/>
+                        <sh:equals rdf:resource="ifixit:forItem"/>
+                    </sh:PropertyShape>
+                    <sh:PropertyShape>
+                        <sh:path rdf:resource="ifixit:forItem"/>
+                        <sh:node rdf:resource="ifixit:PartShape"/>
+                    </sh:PropertyShape>
+                </sh:or>
+            </sh:PropertyShape>
+        </sh:property>
+    </sh:NodeShape>
+
+    <!-- Step Shape -->
     <sh:NodeShape rdf:about="ifixit:StepShape">
         <sh:targetClass rdf:resource="ifixit:Step"/>
         <sh:property>
             <sh:PropertyShape>
                 <sh:path rdf:resource="ifixit:stepOrder"/>
-                <sh:datatype rdf:resource="xsd:integer"/>
+                <sh:datatype rdf:resource="http://www.w3.org/2001/XMLSchema#integer"/>
                 <sh:minCount>1</sh:minCount>
                 <sh:maxCount>1</sh:maxCount>
             </sh:PropertyShape>
@@ -93,11 +226,129 @@
         <sh:property>
             <sh:PropertyShape>
                 <sh:path rdf:resource="ifixit:stepText"/>
-                <sh:datatype rdf:resource="xsd:string"/>
+                <sh:datatype rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+                <sh:minCount>1</sh:minCount>
+            </sh:PropertyShape>
+        </sh:property>
+    </sh:NodeShape>
+
+    <!-- Tool Shape -->
+    <sh:NodeShape rdf:about="ifixit:ToolShape">
+        <sh:targetClass rdf:resource="ifixit:Tool"/>
+        <sh:property>
+            <sh:PropertyShape>
+                <sh:path rdf:resource="ifixit:toolName"/>
+                <sh:datatype rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
                 <sh:minCount>1</sh:minCount>
                 <sh:maxCount>1</sh:maxCount>
             </sh:PropertyShape>
         </sh:property>
     </sh:NodeShape>
+
+    <!-- Part Shape (for Sub-Procedure Constraint) -->
+    <sh:NodeShape rdf:about="ifixit:PartShape">
+        <sh:targetClass rdf:resource="ifixit:Part"/>
+        <!-- Part-of Constraint -->
+        <sh:property>
+            <sh:PropertyShape>
+                <sh:path rdf:resource="ifixit:isPartOf"/>
+                <sh:hasValue rdf:resource="ifixit:Item"/>
+            </sh:PropertyShape>
+        </sh:property>
+    </sh:NodeShape>
+
+    <owl:Class rdf:about="ifixit:PowerBookModel">
+        <rdfs:subClassOf rdf:resource="ifixit:MacLaptop"/>
+    </owl:Class>
+
+    <owl:Class rdf:about="ifixit:PowerBookG3">
+        <rdfs:subClassOf rdf:resource="ifixit:PowerBookModel"/>
+    </owl:Class>
+
+    <owl:Class rdf:about="ifixit:PowerBookG3Lombard">
+        <rdfs:subClassOf rdf:resource="ifixit:PowerBookG3"/>
+    </owl:Class>
+
+    <owl:Class rdf:about="ifixit:PowerBookG3Pismo">
+        <rdfs:subClassOf rdf:resource="ifixit:PowerBookG3"/>
+    </owl:Class>
+
+    <owl:Class rdf:about="ifixit:PowerBookG3Wallstreet">
+        <rdfs:subClassOf rdf:resource="ifixit:PowerBookG3"/>
+    </owl:Class>
+
+    <owl:ObjectProperty rdf:about="ifixit:isModelOf">
+        <owl:inverseOf rdf:resource="ifixit:hasModel"/>
+        <rdfs:domain rdf:resource="ifixit:PowerBookModel"/>
+        <rdfs:range rdf:resource="ifixit:MacLaptop"/>
+    </owl:ObjectProperty>
+
+    <owl:DatatypeProperty rdf:about="ifixit:difficultyLevel">
+        <rdfs:domain rdf:resource="ifixit:Procedure"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </owl:DatatypeProperty>
+
+    <owl:DatatypeProperty rdf:about="ifixit:estimatedTime">
+        <rdfs:domain rdf:resource="ifixit:Procedure"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#duration"/>
+    </owl:DatatypeProperty>
+
+    <owl:ObjectProperty rdf:about="ifixit:requiresPart">
+        <rdfs:domain rdf:resource="ifixit:Procedure"/>
+        <rdfs:range rdf:resource="ifixit:Part"/>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="ifixit:isPrerequisiteFor">
+        <rdfs:domain rdf:resource="ifixit:Procedure"/>
+        <rdfs:range rdf:resource="ifixit:Procedure"/>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="ifixit:hasSubProcedure">
+        <rdfs:domain rdf:resource="ifixit:Procedure"/>
+        <rdfs:range rdf:resource="ifixit:Procedure"/>
+        <rdfs:subPropertyOf rdf:resource="ifixit:isPrerequisiteFor"/>
+    </owl:ObjectProperty>
+
+    <!-- Complex Axioms -->
+    <owl:Class rdf:about="ifixit:ComplexProcedure">
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <owl:Class rdf:about="ifixit:Procedure"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="ifixit:hasStep"/>
+                        <owl:minCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">10</owl:minCardinality>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+
+    <owl:Class rdf:about="ifixit:SafeProcedure">
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <owl:Class rdf:about="ifixit:Procedure"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="ifixit:hasStep"/>
+                        <owl:allValuesFrom>
+                            <owl:Class>
+                                <owl:complementOf>
+                                    <owl:Restriction>
+                                        <owl:onProperty rdf:resource="ifixit:stepText"/>
+                                        <owl:someValuesFrom>
+                                            <rdfs:Datatype>
+                                                <owl:onDatatype rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+                                            </rdfs:Datatype>
+                                        </owl:someValuesFrom>
+                                    </owl:Restriction>
+                                </owl:complementOf>
+                            </owl:Class>
+                        </owl:allValuesFrom>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
 
 </rdf:RDF>

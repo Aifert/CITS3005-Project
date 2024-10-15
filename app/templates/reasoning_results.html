@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <title>Reasoning Results</title>
+    <style>
+        .highlight-red {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <h1>Reasoning Results</h1>
+    <p><a href="{{ url_for('show_knowledge_graph') }}">View Knowledge Graph</a></p>
+    <h2>{{ result_type }}</h2>
+    <ul>
+    {% for item in results[result_type] %}
+        <li>{{ item | replace(text_to_highlight, "<span class='highlight-red'>" + text_to_highlight + "</span>") | safe }}</li>
+    {% endfor %}
+    </ul>
+    {% if subtype %}
+    <h2>{{ subtype }}</h2>
+    <ul>
+    {% for item in results[subtype] %}
+        <li><strong>{{ item[0] }}:</strong> {{ item[1] | replace(text_to_highlight, "<span class='highlight-red'>" + text_to_highlight + "</span>") | safe }}</li>
+    {% endfor %}
+    </ul>
+    {% endif %}
+</body>
+</html>

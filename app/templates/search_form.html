@@ -3,7 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
     <title>Search</title>
+    <style>
+        .predefined {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .reasoning {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .content {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-around;
+        }
+    </style>
 </head>
 <body>
     <h1>Search</h1>
@@ -12,31 +31,68 @@
         <input type="text" id="query" name="query" required>
         <button type="submit">Search</button>
     </form>
-    <h2>Predefined Queries</h2>
-    <form action="{{ url_for('search') }}" method="POST">
-        <button type="submit" name="query" value="find_all_triples">
-            Find all triples
-        </button>
-    </form>
-    <form action="{{ url_for('search') }}" method="POST">
-        <button type="submit" name="query" value="find_items_with_more_than_10_procedures">
-            Find items with more than 10 procedures
-        </button>
-    </form>
-    <form action="{{ url_for('search') }}" method="POST">
-        <button type="submit" name="query" value="find_procedures_with_more_than_6_steps">
-            Find procedures with more than 6 steps
-        </button>
-    </form>
-    <form action="{{ url_for('search') }}" method="POST">
-        <button type="submit" name="query" value="find_procedures_with_unused_tools">
-            Find procedures with unused tools
-        </button>
-    </form>
-    <form action="{{ url_for('search') }}" method="POST">
-        <button type="submit" name="query" value="flag_potential_hazards">
-            Flag potential hazards (steps with "careful" or "dangerous")
-        </button>
-    </form>
+    <a href="{{ url_for('show_knowledge_graph') }}">Knowledge Graph Visualization</a>
+    <div class="content">
+        <div class="predefined">
+            <h2>Predefined Queries</h2>
+            <form action="{{ url_for('search') }}" method="POST">
+                <button type="submit" name="query" value="find_all_triples">
+                    Find all triples
+                </button>
+            </form>
+            <form action="{{ url_for('search') }}" method="POST">
+                <button type="submit" name="query" value="find_items_with_more_than_10_procedures">
+                    Find items with more than 10 procedures
+                </button>
+            </form>
+            <form action="{{ url_for('search') }}" method="POST">
+                <button type="submit" name="query" value="find_procedures_with_more_than_6_steps">
+                    Find procedures with more than 6 steps
+                </button>
+            </form>
+            <form action="{{ url_for('search') }}" method="POST">
+                <button type="submit" name="query" value="find_procedures_with_unused_tools">
+                    Find procedures with unused tools
+                </button>
+            </form>
+            <form action="{{ url_for('search') }}" method="POST">
+                <button type="submit" name="query" value="flag_potential_hazards">
+                    Flag potential hazards (steps with "careful" or "dangerous")
+                </button>
+            </form>
+        </div>
+        <div class="reasoning">
+            <form action="{{ url_for('show_careful_reasoning_results') }}" method="GET">
+                <button type="submit">
+                    View Careful Reasoning Results
+                </button>
+            </form>
+            <form action="{{ url_for('show_long_reasoning_results') }}" method="GET">
+                <button type="submit">
+                    View Long Reasoning Results
+                </button>
+            </form>
+            <form action="{{ url_for('show_complex_reasoning_results') }}" method="GET">
+                <button type="submit">
+                    View Complex Reasoning Results
+                </button>
+            </form>
+            <form action="{{ url_for('show_all_reasoning_results') }}" method="GET">
+                <button type="submit">
+                    View All Reasoning Results
+                </button>
+            </form>
+            <form action="{{ url_for('show_step_reasoning_results') }}" method="GET">
+                <button type="submit">
+                    View Step Count Reasoning Results
+                </button>
+            </form>
+            <form action="{{ url_for('show_tool_reasoning_results') }}" method="GET">
+                <button type="submit">
+                    View Tool Count Reasoning Results
+                </button>
+            </form>
+        </div>
+    </div>
 </body>
 </html>

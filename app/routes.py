@@ -1,4 +1,4 @@
-from flask import render_template, request
+from flask import render_template, request, jsonify
 from app import app, query_engine
 from .tools import queries
 
@@ -6,7 +6,6 @@ from .tools import queries
 @app.route('/')
 def index():
     return render_template('search_form.html')
-
 
 @app.route('/search', methods=['POST'])
 def search():
@@ -24,3 +23,44 @@ def search():
         results.append(str(uri_ref))
 
     return render_template('results.html', results=results, query=query)
+
+
+@app.route('/careful_reasoning_results')
+def show_careful_reasoning_results():
+    results = app.config['REASONING_RESULTS']
+    return render_template('reasoning_results.html', results=results, result_type="CautionProcedures", subtype="StepsWithCaution", text_to_highlight="careful")
+
+
+@app.route('/long_reasoning_results')
+def show_long_reasoning_results():
+    results = app.config['REASONING_RESULTS']
+    return render_template('reasoning_results.html', results=results, result_type="LongProcedures", subtype="ProceduresWithStepCount", text_to_highlight="")
+
+
+@app.route('/complex_reasoning_results')
+def show_complex_reasoning_results():
+    results = app.config['REASONING_RESULTS']
+    return render_template('reasoning_results.html', results=results, result_type="ComplexProcedures", subtype="", text_to_highlight="")
+
+
+@app.route('/all_reasoning_results')
+def show_all_reasoning_results():
+    results = app.config['REASONING_RESULTS']
+    return render_template('reasoning_results.html', results=results, result_type="AllProcedures", subtype=None, text_to_highlight="")
+
+
+@app.route('/step_count_reasoning_results')
+def show_step_reasoning_results():
+    results = app.config['REASONING_RESULTS']
+    return render_template('reasoning_results.html', results=results, result_type="ProceduresWithStepCount", subtype=None, text_to_highlight="")
+
+
+@app.route('/tool_count_reasoning_results')
+def show_tool_reasoning_results():
+    results = app.config['REASONING_RESULTS']
+    return render_template('reasoning_results.html', results=results, result_type="ProceduresWithToolCount", subtype=None, text_to_highlight="")
+
+
+@app.route('/knowledge_graph')
+def show_knowledge_graph():
+    return render_template('knowledge_graph.html')

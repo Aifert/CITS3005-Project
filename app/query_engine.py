@@ -4,14 +4,14 @@ from rdflib import Graph
 class QueryEngine:
     def __init__(self, graph):
         self.graph = graph
-        self.prefix = "PREFIX ifixit: <http://www.ifixit.com/ontology#>"
-
-    def execute_query(self, query_to_execute):
-        query = f"""
-        {self.prefix}
-        {query_to_execute}
+        self.prefix = """
+        PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+        PREFIX ifixit: <http://www.ifixit.com/ontology#>
         """
-        return self.graph.query(query)
+
+    def execute_query(self, query):
+        results = self.graph.query(query)
+        return [row for row in results]
 
     def find_procedures_with_more_than_6_steps(self):
         query = f"""
@@ -27,7 +27,6 @@ class QueryEngine:
             ORDER BY DESC(?stepCount)
             """
         return self.graph.query(query)
-
 
     def find_items_with_more_than_10_procedures(self):
         query = f"""
@@ -78,4 +77,25 @@ class QueryEngine:
         }}
         """
         return self.graph.query(query)
+
+    def find_complex_procedures(self):
+        query = f"""
+        {self.prefix}
+        SELECT ?procedure
+        WHERE {{
+            ?procedure rdf:type ifixit:ComplexProcedure .
+        }}
+        """
+        return self.execute_query(query)
+
+    def find_caution_procedures(self):
+        query = f"""
+        {self.prefix}
+        SELECT ?procedure
+        WHERE {{
+            ?procedure rdf:type ifixit:CautionProcedure .
+        }}
+        """
+        return self.execute_query(query)
+
     # Add more query methods as needed
