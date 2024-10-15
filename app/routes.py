@@ -7,7 +7,6 @@ from .tools import queries
 def index():
     return render_template('search_form.html')
 
-
 @app.route('/search', methods=['POST'])
 def search():
     query = request.form['query']
@@ -60,3 +59,8 @@ def show_step_reasoning_results():
 def show_tool_reasoning_results():
     results = app.config['REASONING_RESULTS']
     return render_template('reasoning_results.html', results=results, result_type="ProceduresWithToolCount", subtype=None, text_to_highlight="")
+
+
+@app.route('/knowledge_graph')
+def show_knowledge_graph():
+    return render_template('knowledge_graph.html')

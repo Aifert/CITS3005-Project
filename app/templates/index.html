@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>iFixit Knowledge Graph Explorer</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <h1>iFixit Knowledge Graph Explorer</h1>
+    <nav>
+        <ul>
+            <li><a href="{{ url_for('show_all_reasoning_results') }}">All Procedures</a></li>
+            <li><a href="{{ url_for('show_step_reasoning_results') }}">Procedures by Step Count</a></li>
+            <li><a href="{{ url_for('show_tool_reasoning_results') }}">Procedures by Tool Count</a></li>
+            <li><a href="{{ url_for('show_knowledge_graph') }}">Knowledge Graph Visualization</a></li>
+        </ul>
+    </nav>
+</body>
+</html>
