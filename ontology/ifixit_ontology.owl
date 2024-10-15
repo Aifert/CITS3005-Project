@@ -185,7 +185,7 @@
                 <sh:path rdf:resource="ifixit:estimatedTime"/>
                 <sh:minCount>1</sh:minCount>
                 <sh:maxCount>1</sh:maxCount>
-                <sh:datatype rdf:resource="xsd:duration"/>
+                <sh:datatype rdf:resource="http://www.w3.org/2001/XMLSchema#duration"/>
             </sh:PropertyShape>
         </sh:property>
     </sh:NodeShape>
@@ -285,12 +285,12 @@
 
     <owl:DatatypeProperty rdf:about="ifixit:difficultyLevel">
         <rdfs:domain rdf:resource="ifixit:Procedure"/>
-        <rdfs:range rdf:resource="xsd:string"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
     </owl:DatatypeProperty>
 
     <owl:DatatypeProperty rdf:about="ifixit:estimatedTime">
         <rdfs:domain rdf:resource="ifixit:Procedure"/>
-        <rdfs:range rdf:resource="xsd:duration"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#duration"/>
     </owl:DatatypeProperty>
 
     <owl:ObjectProperty rdf:about="ifixit:requiresPart">
@@ -339,11 +339,6 @@
                                         <owl:someValuesFrom>
                                             <rdfs:Datatype>
                                                 <owl:onDatatype rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
-                                                <owl:withRestrictions rdf:parseType="Collection">
-                                                    <rdf:Description>
-                                                        <xsd:pattern>.*(?i)(careful|dangerous|warning).*</xsd:pattern>
-                                                    </rdf:Description>
-                                                </owl:withRestrictions>
                                             </rdfs:Datatype>
                                         </owl:someValuesFrom>
                                     </owl:Restriction>

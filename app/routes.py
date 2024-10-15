@@ -1,4 +1,4 @@
-from flask import render_template, request
+from flask import render_template, request, jsonify
 from app import app, query_engine
 from .tools import queries
 
@@ -24,3 +24,8 @@ def search():
         results.append(str(uri_ref))
 
     return render_template('results.html', results=results, query=query)
+
+@app.route('/reasoning_results')
+def show_reasoning_results():
+    results = app.config['REASONING_RESULTS']
+    return render_template('reasoning_results.html', results=results)
