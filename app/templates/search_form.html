@@ -42,7 +42,7 @@
     <h1>Search</h1>
     <form action="{{ url_for('search') }}" method="POST">
         <label for="query">Enter your search query:</label>
-        <input type="text" id="query" name="query" required>
+        <textarea id="query" name="query" required rows="4" style="resize: vertical; width: 100%;"></textarea>
         <button type="submit">Search</button>
     </form>
     <a href="{{ url_for('show_knowledge_graph') }}">Knowledge Graph Visualization</a>

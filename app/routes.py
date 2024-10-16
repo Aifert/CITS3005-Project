@@ -15,12 +15,15 @@ def search():
     print(query)
     try:
         raw_results = queries[query]()
-    except KeyError:
-        query = f"""
-        PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-        PREFIX ifixit: <http://www.ifixit.com/ontology#>
-        {query}"""
-        raw_results = query_engine.execute_query(query)
+    except Exception:
+        try:
+            query = f"""
+            PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+            PREFIX ifixit: <http://www.ifixit.com/ontology#>
+            {query}"""
+            raw_results = query_engine.execute_query(query)
+        except Exception:
+            return render_template('search_form.html')
 
     results = []
 
