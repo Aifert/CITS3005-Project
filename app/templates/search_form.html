@@ -16,11 +16,25 @@
             flex-direction: column;
             gap: 10px;
         }
-
         .content {
             display: flex;
             flex-direction: row;
             justify-content: space-around;
+        }
+        .query-examples {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #f0f0f0;
+            border-radius: 5px;
+        }
+        .query-examples h3 {
+            margin-top: 0;
+        }
+        .query-examples pre {
+            background-color: #e0e0e0;
+            padding: 10px;
+            border-radius: 3px;
+            overflow-x: auto;
         }
     </style>
 </head>
@@ -93,6 +107,49 @@
                 </button>
             </form>
         </div>
+    </div>
+    <div class="query-examples">
+        <h3>Query Examples:</h3>
+        <pre>
+# Find all procedures
+SELECT ?procedure
+WHERE {
+    ?procedure rdf:type ifixit:Procedure .
+}
+
+# Find all items and their procedures
+SELECT ?item ?procedure
+WHERE {
+    ?item rdf:type ifixit:Item .
+    ?item ifixit:hasProcedure ?procedure .
+}
+
+# Find procedures with more than 5 steps
+SELECT ?procedure (COUNT(?step) as ?stepCount)
+WHERE {
+    ?procedure rdf:type ifixit:Procedure .
+    ?procedure ifixit:hasStep ?step .
+}
+GROUP BY ?procedure
+HAVING (COUNT(?step) > 5)
+
+# Find procedures that use a specific tool
+SELECT ?procedure
+WHERE {
+    ?procedure rdf:type ifixit:Procedure .
+    ?procedure ifixit:usesTool ?tool .
+    FILTER(REGEX(STR(?tool), "screwdriver", "i"))
+}
+
+# Find steps containing specific text
+SELECT ?procedure ?step ?stepText
+WHERE {
+    ?procedure rdf:type ifixit:Procedure .
+    ?procedure ifixit:hasStep ?step .
+    ?step ifixit:stepText ?stepText .
+    FILTER(REGEX(?stepText, "carefully", "i"))
+}
+        </pre>
     </div>
 </body>
 </html>
