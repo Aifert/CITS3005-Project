@@ -1,6 +1,8 @@
 from flask import render_template, request, jsonify
 from app import app, query_engine
 from .tools import queries
+from app.graph_generator import generate_query_graph
+from app import kg
 
 
 @app.route('/')
@@ -21,9 +23,10 @@ def search():
     for row in raw_results:
         uri_ref = row[0]
         results.append(str(uri_ref))
+    # Generate the graph for these specific results
+    generate_query_graph(kg, results)
 
     return render_template('results.html', results=results, query=query)
-
 
 @app.route('/careful_reasoning_results')
 def show_careful_reasoning_results():
@@ -64,3 +67,7 @@ def show_tool_reasoning_results():
 @app.route('/knowledge_graph')
 def show_knowledge_graph():
     return render_template('knowledge_graph.html')
+
+@app.route('/query_graph')
+def show_query_graph():
+    return render_template('query_graph.html')
