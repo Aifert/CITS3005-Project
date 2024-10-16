@@ -5,47 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
     <title>Search Results</title>
-    <style>
-        table {
-            border-collapse: collapse;
-            width: 100%;
-        }
-        th, td {
-            border: 1px solid #ddd;
-            padding: 8px;
-            text-align: left;
-        }
-        th {
-            background-color: #f2f2f2;
-        }
-    </style>
 </head>
 <body>
-    <h1>Your query was :</h1>
-    <h2>{{ query }}</h2>
-    <h1>Search Results</h1>
-
+    <h1>Search Results for: {{ query }}</h1>
     {% if results %}
-        <table>
-            <thead>
-                <tr>
-                    <th>Index</th>
-                    <th>Data</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for index in range(results|length) %}
-                    <tr>
-                        <td>{{ index }}</td>
-                        <td>{{ results[index] }}</td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+        <ul>
+        {% for result in results %}
+            <li>{{ result }}</li>
+        {% endfor %}
+        </ul>
     {% else %}
         <p>No results found.</p>
     {% endif %}
-
-    <a href="{{ url_for('index') }}">Back to Search</a>
+    <p><a href="{{ url_for('show_query_graph') }}">View Query-Specific Knowledge Graph</a></p>
+    <p><a href="{{ url_for('index') }}">Back to Search</a></p>
 </body>
 </html>
