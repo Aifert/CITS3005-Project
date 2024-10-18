@@ -1,3 +1,8 @@
+
+# CITS3005 Project
+## Student 1: Aifert Yet 23455873
+## Student 2: Yu Weng Choong 23627242
+
 1. **Set Up the Virtual Environment**:
     ```bash
     python3 -m venv venv
